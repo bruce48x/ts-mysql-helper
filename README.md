@@ -1,9 +1,5 @@
 # ts-mysql-helper
-mysql 帮助类，typescript v2.9 版本下编写
-
-在 Node.js v8.x 运行良好
-
-* 如果需要 js 版本，可以看看 [mysql-helper-es6](https://github.com/bruce48x/mysql-helper-es6)
+mysql 帮助类，需要 Node.js 8.0 以上版本
 
 ## Usage
 ### 初始化
@@ -19,6 +15,21 @@ const mysqlConfig = {
 };
 const helper = MysqlHelper.getInstance(mysqlConfig);
 ```
+### 查询一条数据
+```typescript
+const tableName = 'my_table';
+const fields = ['name', 'age'];
+const where = {id: 1};
+const helper = MysqlHelper.getInstance();
+async function main() {
+    try {
+        const values = await helper.selectOne(tableName, fields, where);
+        console.log(`val = ${values}`);
+    } catch (err) {
+        console.log(err.stack);
+    }
+}
+```
 ### 查询多条数据
 ```typescript
 const tableName = 'my_table';
@@ -26,14 +37,14 @@ const fields = ['name', 'age'];
 const where = {id: 1};
 const limit = 1;
 const helper = MysqlHelper.getInstance();
-(async () => {
+async function main() {
     try {
-        let values = await helper.select(tableName, fields, where, limit);
+        const values = await helper.select(tableName, fields, where, limit);
         console.log(`val = ${values}`);
     } catch (err) {
         console.log(err.stack);
     }
-})();
+}
 ```
 ### 更复杂的查询
 ```typescript
@@ -46,43 +57,28 @@ const where = {id: {
 }};
 const limit = 1;
 const helper = MysqlHelper.getInstance();
-(async () => {
+async function main() {
     try {
-        let values = await helper.select(tableName, fields, where, limit);
+        const values = await helper.select(tableName, fields, where, limit);
         console.log(`val = ${values}`);
     } catch (err) {
         console.log(err.stack);
     }
-})();
+}
 ```
-### 查询一条数据
-```typescript
-const tableName = 'my_table';
-const fields = ['name', 'age'];
-const where = {id: 1};
-const helper = MysqlHelper.getInstance();
-(async () => {
-    try {
-        let values = await helper.selectOne(tableName, fields, where);
-        console.log(`val = ${values}`);
-    } catch (err) {
-        console.log(err.stack);
-    }
-})();
-```
+
 ### 插入数据
 ```typescript
 const tableName = 'my_table';
 const values = {name: 'bruce', age: 28};
 const helper = MysqlHelper.getInstance();
-(async () => {
+async function main() {
     try {
-        let insertId = await helper.insertInto(tableName, values);
+        const insertId = await helper.insertInto(tableName, values);
     } catch (err) {
         console.log(err.stack);
     }
-})();
-
+}
 ```
 ### 批量插入数据
 ```typescript
@@ -94,30 +90,29 @@ const valueArr = [
     ['doris', 30]
 ];
 const helper = MysqlHelper.getInstance();
-(async () => {
+async function main() {
     try {
-        let results = await helper.batchInsertInto(tableName, fieldsArr, valueArr);
+        const results = await helper.batchInsertInto(tableName, fieldsArr, valueArr);
         for (let r of results) {
             console.log('inserted id =', r.insertId);
         }
     } catch (err) {
         console.log(err.stack);
     }
-})();
+}
 ```
-
 ### 插入或更新数据
 ```typescript
 const tableName = 'my_table';
 const values = {name: 'bruce', age: 28};
 const helper = MysqlHelper.getInstance();
-(async () => {
+async function main() {
     try {
-        let insertId = await helper.replaceInto(tableName, values);
+        const insertId = await helper.replaceInto(tableName, values);
     } catch (err) {
         console.log(err.stack);
     }
-})();
+}
 ```
 
 ### 更新数据
@@ -126,14 +121,14 @@ const tableName = 'my_table';
 const values = {name: 'bruce'};
 const where = {id: 1};
 const helper = MysqlHelper.getInstance();
-(async () => {
+async function main() {
     try {
-        let results = await helper.update(tableName, values, where);
+        const results = await helper.update(tableName, values, where);
         console.log(`res = ${results}`);
     } catch (err) {
         console.log(err.stack);
     }
-})();
+}
 ```
 
 ### 删除数据
@@ -141,24 +136,24 @@ const helper = MysqlHelper.getInstance();
 const tableName = 'my_table';
 const where = {id: 1};
 const helper = MysqlHelper.getInstance();
-(async () => {
+async function main() {
     try {
-        let affectedRows = await helper.delete(tableName, where);
+        const affectedRows = await helper.delete(tableName, where);
         console.log(`res = ${affectedRows}`);
     } catch (err) {
         console.log(err.stack);
     }
-})();
+}
 ```
 
 ### 如果现有功能还无法满足需求，可以使用 query()
 ```typescript
 const helper = MysqlHelper.getInstance();
-(async () => {
+async function main() {
     try {
-        let rows = await helper.query('select * from my_table', {id: 1});
+        const rows = await helper.query('select * from my_table', {id: 1});
     } catch (err) {
         console.log(err.stack);
     }
-})();
+}
 ```
