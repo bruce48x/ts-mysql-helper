@@ -1,0 +1,34 @@
+{
+  "name": "ts-mysql-helper",
+  "version": "0.1.9",
+  "description": "mysql helper",
+  "main": "./dist/index.js",
+  "keywords": [
+    "mysql",
+    "typescript"
+  ],
+  "author": "bruce48x",
+  "license": "MIT",
+  "dependencies": {
+    "@types/lodash": "^4.14.130",
+    "@types/mysql": "^2.15.6",
+    "lodash": "^4.17.11",
+    "mysql": "^2.17.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.6",
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "ts-node": "^7.0.1",
+    "typescript": "^2.9.2"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "mocha -r ts-node/register ./test/*.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bruce48x/ts-mysql-helper"
+  }
+}
