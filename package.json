@@ -1,6 +1,6 @@
 {
   "name": "ts-mysql-helper",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "mysql helper",
   "main": "./dist/index.js",
   "keywords": [
@@ -20,7 +20,6 @@
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.6",
-    "chai": "^4.2.0",
     "mocha": "^5.2.0",
     "ts-node": "^7.0.1",
     "typescript": "^2.9.2"
