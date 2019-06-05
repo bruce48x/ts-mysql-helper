@@ -28,12 +28,11 @@ export class Utils {
             sql += ` ${res.sql}`;
             args = [...args, ...res.args];
         }
-        // limit 可能为空
-        if (limit) {
-            sql += ` limit ${limit}`;
-        }
         if (order) {
             sql += ' ' + Utils.processOrder(order);
+        }
+        if (limit) {
+            sql += ` limit ${limit}`;
         }
         return { sql, args };
     }
