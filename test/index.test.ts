@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
+const assert = require('assert');
 import { Utils, IWhereResult } from '../utils';
 
 describe('测试 Utils，将各种参数转成 sql 语句', () => {
@@ -50,6 +51,23 @@ describe('测试 Utils，将各种参数转成 sql 语句', () => {
             expect(args).to.eql([1, 3]);
             done();
         });
+
+        it('order 语句 #1', async () => {
+            const sql = Utils.processOrder({ username: 'desc' });
+            assert(sql == 'order by username desc');
+        });
+
+        it('order 语句 #2', async () => {
+            const sql = Utils.processOrder({ username: 'dlislij##' });
+            assert(sql == 'order by username asc');
+        });
+
+        it('order 语句 #3', async () => {
+            const userId = 1;
+            const username = 'ha';
+            const sql = Utils.processOrder({ username, userId });
+            assert(sql == 'order by username asc,userId asc');
+        });
     });
 
     describe('sqlInsert() 方法', () => {
@@ -77,16 +95,23 @@ describe('测试 Utils，将各种参数转成 sql 语句', () => {
     });
 
     describe('sqlSelect() 方法', () => {
-        it('sqlSelect() 1', (done: Function) => {
+        it('sqlSelect() #1', (done: Function) => {
             const { sql, args } = Utils.sqlSelect('myTable', ['name', 'age', 'addr'], { id: 1 }, 1);
             expect(sql).to.equal('select name, age, addr from myTable where id = ? limit 1');
             expect(args).to.eql([1]);
             done();
         });
 
-        it('sqlSelect() 2', (done: Function) => {
+        it('sqlSelect() #2', (done: Function) => {
             const { sql, args } = Utils.sqlSelect('myTable', ['name', 'age', 'addr'], { id: { 'in': [1, 3, 5] } });
             expect(sql).to.equal('select name, age, addr from myTable where id in (?,?,?)');
+            expect(args).to.eql([1, 3, 5]);
+            done();
+        });
+
+        it('sqlSelect() #3', (done: Function) => {
+            const { sql, args } = Utils.sqlSelect('myTable', ['name', 'age', 'addr'], { id: { 'in': [1, 3, 5] } }, null, { age: 'desc' });
+            expect(sql).to.equal('select name, age, addr from myTable where id in (?,?,?) order by age desc');
             expect(args).to.eql([1, 3, 5]);
             done();
         });
@@ -102,20 +127,20 @@ describe('测试 Utils，将各种参数转成 sql 语句', () => {
     });
 
     describe('sqlDelete() 方法', () => {
-        it('sqlDelete() 1', (done: Function) => {
+        it('sqlDelete() #1', (done: Function) => {
             const { sql, args } = Utils.sqlDelete('myTable');
             expect(sql).to.equal('delete from myTable');
             done();
         });
 
-        it('sqlDelete() 2', (done: Function) => {
+        it('sqlDelete() #2', (done: Function) => {
             const { sql, args } = Utils.sqlDelete('myTable', { id: 1 });
             expect(sql).to.equal('delete from myTable where id = ?');
             expect(args).to.eql([1]);
             done();
         });
 
-        it('sqlDelete() 3', (done: Function) => {
+        it('sqlDelete() #3', (done: Function) => {
             const { sql, args } = Utils.sqlDelete('myTable', {
                 id: {
                     'in': [1, 3]
@@ -126,7 +151,7 @@ describe('测试 Utils，将各种参数转成 sql 语句', () => {
             done();
         });
 
-        it('sqlDelete() 4', (done: Function) => {
+        it('sqlDelete() #4', (done: Function) => {
             const { sql, args } = Utils.sqlDelete('myTable', { name: 'bruce' }, 5);
             expect(sql).to.equal('delete from myTable where name = ? limit 5');
             expect(args).to.eql(['bruce']);

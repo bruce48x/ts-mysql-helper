@@ -1,6 +1,6 @@
 {
   "name": "ts-mysql-helper",
-  "version": "0.1.10",
+  "version": "0.2.0",
   "description": "mysql helper",
   "main": "./dist/index.js",
   "keywords": [
@@ -12,8 +12,10 @@
   "dependencies": {
     "@types/lodash": "^4.14.130",
     "@types/mysql": "^2.15.6",
+    "intelli-espower-loader": "^1.0.1",
     "lodash": "^4.17.11",
-    "mysql": "^2.17.1"
+    "mysql": "^2.17.1",
+    "power-assert": "^1.6.1"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
@@ -25,7 +27,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "mocha -r ts-node/register ./test/*.ts"
+    "test": "mocha --require intelli-espower-loader --exit ./dist/test/*.js"
   },
   "repository": {
     "type": "git",

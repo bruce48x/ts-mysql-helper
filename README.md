@@ -66,6 +66,23 @@ async function main() {
     }
 }
 ```
+```typescript
+const tableName = 'my_table';
+const fields = ['name', 'age'];
+// order by 语句
+const where = { id:1 };
+const limit = 1;
+const order = { id: 'desc' };
+const helper = MysqlHelper.getInstance();
+async function main() {
+    try {
+        const values = await helper.select(tableName, fields, where, limit, order);
+        console.log(`val = ${values}`);
+    } catch (err) {
+        console.log(err.stack);
+    }
+}
+```
 
 ### 插入数据
 ```typescript

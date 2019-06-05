@@ -88,9 +88,7 @@ export class MysqlHelper extends EventEmitter {
      */
     async insertInto(table: string, values: any): Promise<number> {
         const sql = Utils.sqlInsert(table);
-        let {
-            results
-        } = await this._query(sql, values);
+        let { results } = await this._query(sql, values);
         return results.insertId;
     };
 
@@ -102,9 +100,7 @@ export class MysqlHelper extends EventEmitter {
      */
     async batchInsertInto(table: string, fieldsArr: Array<any>, valueArr: Array<any>) {
         const sql = Utils.sqlBatchInsert(table, fieldsArr);
-        const {
-            results
-        } = await this._query(sql, [valueArr]);
+        const { results } = await this._query(sql, [valueArr]);
         return results;
     }
 
@@ -115,9 +111,7 @@ export class MysqlHelper extends EventEmitter {
      */
     async replaceInto(table: string, values: any) {
         const sql = Utils.sqlReplace(table);
-        let {
-            results
-        } = await this._query(sql, values);
+        let { results } = await this._query(sql, values);
         return results.insertId;
     }
 
@@ -128,11 +122,9 @@ export class MysqlHelper extends EventEmitter {
      * @param where
      * @param limit 限制取几条
      */
-    async select(table: string, fields: Array<any>, where?: any, limit?: number) {
-        const { sql, args } = Utils.sqlSelect(table, fields, where, limit);
-        let {
-            results
-        } = await this._query(sql, args);
+    async select(table: string, fields: Array<any>, where?: any, limit?: number, order?: any) {
+        const { sql, args } = Utils.sqlSelect(table, fields, where, limit, order);
+        let { results } = await this._query(sql, args);
         return results;
     };
 
@@ -142,8 +134,8 @@ export class MysqlHelper extends EventEmitter {
      * @param fields 字段名
      * @param where
      */
-    async selectOne(table: string, fields: any[], where: any) {
-        let res = await this.select(table, fields, where, 1);
+    async selectOne(table: string, fields: any[], where: any, order?: any) {
+        let res = await this.select(table, fields, where, 1, order);
         return res[0];
     };
 
@@ -155,9 +147,7 @@ export class MysqlHelper extends EventEmitter {
      */
     async update(table: string, values: any, where: any) {
         const { sql, args } = Utils.sqlUpdate(table, values, where);
-        let {
-            results
-        } = await this._query(sql, args);
+        let { results } = await this._query(sql, args);
         return results;
     }
 
@@ -169,9 +159,7 @@ export class MysqlHelper extends EventEmitter {
      */
     async delete(table: string, where?: any, limit?: number) {
         const { sql, args } = Utils.sqlDelete(table, where, limit);
-        let {
-            results
-        } = await this._query(sql, args);
+        let { results } = await this._query(sql, args);
         return results.affectedRows;
     }
 }

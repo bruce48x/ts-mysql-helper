@@ -19,7 +19,7 @@ export class Utils {
         return `replace into ${table} set ?`;
     }
 
-    static sqlSelect(table: string, fields: any[], where?: any, limit?: number) {
+    static sqlSelect(table: string, fields: any[], where?: any, limit?: number, order?: any) {
         let fieldsStr = fields.join(', ');
         let sql = `select ${fieldsStr} from ${table}`;
         let args: any[] = [];
@@ -31,6 +31,9 @@ export class Utils {
         // limit 可能为空
         if (limit) {
             sql += ` limit ${limit}`;
+        }
+        if (order) {
+            sql += ' ' + Utils.processOrder(order);
         }
         return { sql, args };
     }
@@ -123,5 +126,22 @@ export class Utils {
         }
         const sql = 'in (' + cond.join(',') + ')';
         return { sql, args };
+    }
+
+    static processOrder(order: any): string {
+        if (!order || Object.keys(order).length < 1) {
+            return '';
+        }
+        let sql = 'order by ';
+        let keyArr = [];
+        for (let i in order) {
+            if (order[i] == 'desc') {
+                keyArr.push(`${i} desc`);
+            } else {
+                keyArr.push(`${i} asc`);
+            }
+        }
+        sql += keyArr.join(',');
+        return sql;
     }
 }
