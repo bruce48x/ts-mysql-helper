@@ -162,4 +162,10 @@ export class MysqlHelper extends EventEmitter {
         let { results } = await this._query(sql, args);
         return results.affectedRows;
     }
+
+    async increment(table: string, field: string, value: number, where: any) {
+        const { sql, args } = Utils.sqlIncrement(table, field, value, where);
+        const { results } = await this._query(sql, args);
+        return results;
+    }
 }

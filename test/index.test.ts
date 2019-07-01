@@ -146,4 +146,12 @@ describe('测试 Utils，将各种参数转成 sql 语句', () => {
             assert.deepEqual(args, ['bruce']);
         });
     });
+
+    describe('sqlIncrement() 方法', async () => {
+        it('sqlIncrement() #1', async () => {
+            const { sql, args } = Utils.sqlIncrement('myTable', 'field1', 10, { id: 1 });
+            assert(sql == 'update myTable set field1 = field1 + ? where id = ?');
+            assert.deepEqual(args, [10, 1]);
+        });
+    });
 });

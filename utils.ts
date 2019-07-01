@@ -72,6 +72,18 @@ export class Utils {
         return { sql, args };
     }
 
+    static sqlIncrement(table: string, field: string, value: any, where: any) {
+        let sql = `update ${table} set ${field} = ${field} + ?`;
+        let args: Array<any> = [value];
+        // 转 where 为 sql
+        const res = Utils.processWhere(where);
+        if (res.sql && res.args) {
+            sql += ` ${res.sql}`;
+            args = [...args, ...res.args];
+        }
+        return { sql, args };
+    }
+
     static processWhere(where: any): IWhereResult {
         if (lodash.isEmpty(where)) {
             return {};
