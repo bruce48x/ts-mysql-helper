@@ -19,7 +19,7 @@ const helper = MysqlHelper.getInstance(mysqlConfig);
 ```typescript
 const tableName = 'my_table';
 const fields = ['name', 'age'];
-const where = {id: 1};
+const where = { id: 1 };
 const helper = MysqlHelper.getInstance();
 async function main() {
     try {
@@ -34,7 +34,7 @@ async function main() {
 ```typescript
 const tableName = 'my_table';
 const fields = ['name', 'age'];
-const where = {id: 1};
+const where = { id: 1 };
 const limit = 1;
 const helper = MysqlHelper.getInstance();
 async function main() {
@@ -87,7 +87,7 @@ async function main() {
 ### 插入数据
 ```typescript
 const tableName = 'my_table';
-const values = {name: 'bruce', age: 28};
+const values = { name: 'bruce', age: 28 };
 const helper = MysqlHelper.getInstance();
 async function main() {
     try {
@@ -121,7 +121,7 @@ async function main() {
 ### 插入或更新数据
 ```typescript
 const tableName = 'my_table';
-const values = {name: 'bruce', age: 28};
+const values = { name: 'bruce', age: 28 };
 const helper = MysqlHelper.getInstance();
 async function main() {
     try {
@@ -136,7 +136,7 @@ async function main() {
 ```typescript
 const tableName = 'my_table';
 const values = {name: 'bruce'};
-const where = {id: 1};
+const where = { id: 1 };
 const helper = MysqlHelper.getInstance();
 async function main() {
     try {
@@ -151,12 +151,29 @@ async function main() {
 ### 删除数据
 ```typescript
 const tableName = 'my_table';
-const where = {id: 1};
+const where = { id: 1 };
 const helper = MysqlHelper.getInstance();
 async function main() {
     try {
         const affectedRows = await helper.delete(tableName, where);
         console.log(`res = ${affectedRows}`);
+    } catch (err) {
+        console.log(err.stack);
+    }
+}
+```
+
+### 自增
+```typescript
+const tableName = 'my_table';
+const field = 'field1';
+const value = 10;
+const where = { id: 1 };
+const helper = MysqlHelper.getInstance();
+async function main() {
+    try {
+        const result = await helper.increment(tableName, field, value, where);
+        console.log(`res = ${result}`);
     } catch (err) {
         console.log(err.stack);
     }
