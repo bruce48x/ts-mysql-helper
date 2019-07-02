@@ -40,13 +40,22 @@ export class Utils {
     static sqlUpdate(table: string, values: any, where: any) {
         let sql = `update ${table} set`;
         // 转 values 为 sql
-        let keys, vals, args: Array<any> = [];
-        keys = Object.keys(values);
-        vals = Object.values(values);
-        if (keys && keys.length > 0 && vals && vals.length > 0) {
-            sql += ' ' + keys.join(' = ?, ') + ' = ?';
-            args = [...vals];
+        let args: Array<any> = [];
+        let valStr = '';
+        for (const field in values) {
+            if (typeof values[field] == 'object') {
+                // increment
+                if (values[field].increment) {
+                    valStr += ` ${field} = ${field} + ?,`;
+                    args.push(values[field].increment);
+                }
+            } else {
+                // 普通赋值
+                valStr += ` ${field} = ?,`;
+                args.push(values[field]);
+            }
         }
+        sql += valStr.slice(0, -1);
         // 转 where 为 sql
         const res = Utils.processWhere(where);
         if (res.sql && res.args) {
@@ -94,22 +103,23 @@ export class Utils {
             if (!where.hasOwnProperty(cond)) {
                 continue;
             }
-            if (typeof where[cond] === 'object') {
-                this.whereObject(cond, where[cond], condition, condArgs);
+            const val = where[cond];
+            if (typeof val == 'object') {
+                this.whereObject(cond, val, condition, condArgs);
             } else {
-                this.whereString(cond, where[cond], condition, condArgs);
+                this.whereString(cond, val, condition, condArgs);
             }
         }
         const sql = 'where ' + condition.join(' and ');
         return { sql, args: condArgs };
     }
 
-    private static whereString(k: string | number, v: string | number, cond: any[], args: any[]) {
+    private static whereString(k: string, v: any, cond: any[], args: any[]) {
         cond.push(`${k} = ?`);
         args.push(v);
     }
 
-    private static whereObject(k: string | number, v: any, cond: any[], args: any[]) {
+    private static whereObject(k: string, v: any, cond: any[], args: any[]) {
         for (let i in v) {
             if (i === 'in') {
                 const res = this.inStatement(v[i]);
@@ -119,8 +129,8 @@ export class Utils {
                 }
                 break;
             } else {
-                args.push(v[i]);
                 cond.push(`${k} ${i} ?`);
+                args.push(v[i]);
             }
         }
     }

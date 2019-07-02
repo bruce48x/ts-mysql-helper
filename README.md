@@ -132,10 +132,27 @@ async function main() {
 }
 ```
 
-### 更新数据
+### 更新数据 #1
 ```typescript
 const tableName = 'my_table';
-const values = {name: 'bruce'};
+const values = { name: 'bruce' };
+const where = { id: 1 };
+const helper = MysqlHelper.getInstance();
+async function main() {
+    try {
+        const results = await helper.update(tableName, values, where);
+        console.log(`res = ${results}`);
+    } catch (err) {
+        console.log(err.stack);
+    }
+}
+```
+
+### 更新数据 #2
+```typescript
+const tableName = 'my_table';
+// 设定自增
+const values = { tagline: 'stay foolish', age: { increment: 1 } };
 const where = { id: 1 };
 const helper = MysqlHelper.getInstance();
 async function main() {
