@@ -111,10 +111,16 @@ describe('测试 Utils，将各种参数转成 sql 语句', () => {
     });
 
     describe('sqlUpdate() 方法', async () => {
-        it('sqlUpdate()', async () => {
+        it('sqlUpdate() #1', async () => {
             const { sql, args } = Utils.sqlUpdate('myTable', { age: 28, addr: 'xiamen' }, { id: 1 });
             assert(sql == 'update myTable set age = ?, addr = ? where id = ?');
             assert.deepEqual(args, [28, 'xiamen', 1]);
+        });
+
+        it('sqlUpdate() #2', async () => {
+            const { sql, args } = Utils.sqlUpdate('myTable', { age: { increment: 1 }, addr: 'xiamen' }, { id: 1 });
+            assert(sql == 'update myTable set age = age + ?, addr = ? where id = ?');
+            assert.deepEqual(args, [1, 'xiamen', 1]);
         });
     });
 
