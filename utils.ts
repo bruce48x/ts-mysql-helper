@@ -1,4 +1,5 @@
 import * as lodash from 'lodash';
+import { TWhere } from './index';
 
 export interface IWhereResult {
     sql?: string;
@@ -93,7 +94,7 @@ export class Utils {
         return { sql, args };
     }
 
-    static processWhere(where: any): IWhereResult {
+    static processWhere(where: TWhere): IWhereResult {
         if (lodash.isEmpty(where)) {
             return {};
         }
@@ -114,23 +115,23 @@ export class Utils {
         return { sql, args: condArgs };
     }
 
-    private static whereString(k: string, v: any, cond: any[], args: any[]) {
-        cond.push(`${k} = ?`);
-        args.push(v);
+    private static whereString(key: string, val: string | number, cond: any[], args: any[]) {
+        cond.push(`${key} = ?`);
+        args.push(val);
     }
 
-    private static whereObject(k: string, v: any, cond: any[], args: any[]) {
-        for (let i in v) {
+    private static whereObject(key: string, val: { [key: string]: any }, cond: any[], args: any[]) {
+        for (let i in val) {
             if (i === 'in') {
-                const res = this.inStatement(v[i]);
-                cond.push(`${k} ${res.sql}`);
+                const res = this.inStatement(val[i]);
+                cond.push(`${key} ${res.sql}`);
                 for (let o of res.args) {
                     args.push(o);
                 }
                 break;
             } else {
-                cond.push(`${k} ${i} ?`);
-                args.push(v[i]);
+                cond.push(`${key} ${i} ?`);
+                args.push(val[i]);
             }
         }
     }

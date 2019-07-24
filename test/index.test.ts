@@ -1,21 +1,21 @@
-import 'mocha';
-const assert = require('assert');
 import { Utils, IWhereResult } from '../utils';
+import * as request from 'supertest';
+import { MysqlHelper } from '../index';
 
 describe('测试 Utils，将各种参数转成 sql 语句', () => {
-    describe('内部函数的测试', async () => {
+    describe('内部函数的测试', () => {
         it('单个简单条件', async () => {
             const where = { id: 1 };
             const { sql, args } = Utils.processWhere(where);
-            assert(sql == 'where id = ?');
-            assert.deepEqual(args, [1]);
+            expect(sql).toBe('where id = ?');
+            expect(args).toStrictEqual([1]);
         });
 
         it('多个简单条件', async () => {
             const where = { id: 1, name: 'b' };
             const { sql, args } = Utils.processWhere(where);
-            assert(sql == 'where id = ? and name = ?');
-            assert.deepEqual(args, [1, 'b']);
+            expect(sql).toBe('where id = ? and name = ?');
+            expect(args).toStrictEqual([1, 'b']);
         });
 
         it('范围', async () => {
@@ -26,7 +26,7 @@ describe('测试 Utils，将各种参数转成 sql 语句', () => {
                 }
             };
             const { sql } = Utils.processWhere(where);
-            assert(sql == 'where id >= ? and id <= ?');
+            expect(sql).toBe('where id >= ? and id <= ?');
         });
 
         it('in 语句', async () => {
@@ -36,104 +36,104 @@ describe('测试 Utils，将各种参数转成 sql 语句', () => {
                 }
             };
             const { sql, args } = Utils.processWhere(where);
-            assert(sql == 'where id in (?,?,?)');
-            assert.deepEqual(args, [1, 3, 5]);
+            expect(sql).toBe('where id in (?,?,?)');
+            expect(args).toStrictEqual([1, 3, 5]);
         });
 
         it('inStatement()', async () => {
             const { sql, args } = Utils.inStatement([1, 3]);
-            assert(sql == 'in (?,?)');
-            assert.deepEqual(args, [1, 3]);
+            expect(sql).toBe('in (?,?)');
+            expect(args).toStrictEqual([1, 3]);
         });
 
         it('order 语句 #1', async () => {
             const sql = Utils.processOrder({ username: 'desc' });
-            assert(sql == 'order by username desc');
+            expect(sql).toBe('order by username desc');
         });
 
         it('order 语句 #2', async () => {
             const sql = Utils.processOrder({ username: 'dlislij##' });
-            assert(sql == 'order by username asc');
+            expect(sql).toBe('order by username asc');
         });
 
         it('order 语句 #3', async () => {
             const userId = 1;
             const username = 'ha';
             const sql = Utils.processOrder({ username, userId });
-            assert(sql == 'order by username asc,userId asc');
+            expect(sql).toBe('order by username asc,userId asc');
         });
     });
 
-    describe('sqlInsert() 方法', async () => {
+    describe('sqlInsert() 方法', () => {
         it('sqlInsert()', async () => {
             const sql = Utils.sqlInsert('myTable');
-            assert(sql == 'insert into myTable set ?');
+            expect(sql).toBe('insert into myTable set ?');
         });
     });
 
-    describe('sqlBatchInsert() 方法', async () => {
+    describe('sqlBatchInsert() 方法', () => {
         it('sqlBatchInsert()', async () => {
             const sql = Utils.sqlBatchInsert('myTable', ['id', 'name', 'age']);
-            assert(sql == 'insert into myTable (id,name,age) values ?');
+            expect(sql).toBe('insert into myTable (id,name,age) values ?');
         });
     });
 
-    describe('sqlReplace() 方法', async () => {
+    describe('sqlReplace() 方法', () => {
         it('sqlReplace()', async () => {
             const sql = Utils.sqlReplace('myTable');
-            assert(sql == 'replace into myTable set ?');
+            expect(sql).toBe('replace into myTable set ?');
         });
     });
 
-    describe('sqlSelect() 方法', async () => {
+    describe('sqlSelect() 方法', () => {
         it('sqlSelect() #1', async () => {
             const { sql, args } = Utils.sqlSelect('myTable', ['name', 'age', 'addr'], { id: 1 }, 1);
-            assert(sql == 'select name, age, addr from myTable where id = ? limit 1');
-            assert.deepEqual(args, [1]);
+            expect(sql).toBe('select name, age, addr from myTable where id = ? limit 1');
+            expect(args).toStrictEqual([1]);
         });
 
         it('sqlSelect() #2', async () => {
             const { sql, args } = Utils.sqlSelect('myTable', ['name', 'age', 'addr'], { id: { 'in': [1, 3, 5] } });
-            assert(sql == 'select name, age, addr from myTable where id in (?,?,?)');
-            assert.deepEqual(args, [1, 3, 5]);
+            expect(sql).toBe('select name, age, addr from myTable where id in (?,?,?)');
+            expect(args).toStrictEqual([1, 3, 5]);
         });
 
         it('sqlSelect() #3', async () => {
             const { sql, args } = Utils.sqlSelect('myTable', ['name', 'age', 'addr'], { id: { 'in': [1, 3, 5] } }, null, { age: 'desc' });
-            assert(sql == 'select name, age, addr from myTable where id in (?,?,?) order by age desc');
-            assert.deepEqual(args, [1, 3, 5]);
+            expect(sql).toBe('select name, age, addr from myTable where id in (?,?,?) order by age desc');
+            expect(args).toStrictEqual([1, 3, 5]);
         });
 
         it('sqlSelect() #4', async () => {
             const { sql, args } = Utils.sqlSelect('myTable', ['name', 'age', 'addr'], {}, null, { age: 'desc' });
-            assert(sql == 'select name, age, addr from myTable order by age desc');
+            expect(sql).toBe('select name, age, addr from myTable order by age desc');
         });
     });
 
-    describe('sqlUpdate() 方法', async () => {
+    describe('sqlUpdate() 方法', () => {
         it('sqlUpdate() #1', async () => {
             const { sql, args } = Utils.sqlUpdate('myTable', { age: 28, addr: 'xiamen' }, { id: 1 });
-            assert(sql == 'update myTable set age = ?, addr = ? where id = ?');
-            assert.deepEqual(args, [28, 'xiamen', 1]);
+            expect(sql).toBe('update myTable set age = ?, addr = ? where id = ?');
+            expect(args).toStrictEqual([28, 'xiamen', 1]);
         });
 
         it('sqlUpdate() #2', async () => {
             const { sql, args } = Utils.sqlUpdate('myTable', { age: { increment: 1 }, addr: 'xiamen' }, { id: 1 });
-            assert(sql == 'update myTable set age = age + ?, addr = ? where id = ?');
-            assert.deepEqual(args, [1, 'xiamen', 1]);
+            expect(sql).toBe('update myTable set age = age + ?, addr = ? where id = ?');
+            expect(args).toStrictEqual([1, 'xiamen', 1]);
         });
     });
 
-    describe('sqlDelete() 方法', async () => {
+    describe('sqlDelete() 方法', () => {
         it('sqlDelete() #1', async () => {
             const { sql, args } = Utils.sqlDelete('myTable');
-            assert(sql == 'delete from myTable');
+            expect(sql).toBe('delete from myTable');
         });
 
         it('sqlDelete() #2', async () => {
             const { sql, args } = Utils.sqlDelete('myTable', { id: 1 });
-            assert(sql == 'delete from myTable where id = ?');
-            assert.deepEqual(args, [1]);
+            expect(sql).toBe('delete from myTable where id = ?');
+            expect(args).toStrictEqual([1]);
         });
 
         it('sqlDelete() #3', async () => {
@@ -142,22 +142,38 @@ describe('测试 Utils，将各种参数转成 sql 语句', () => {
                     'in': [1, 3]
                 }
             });
-            assert(sql == 'delete from myTable where id in (?,?)');
-            assert.deepEqual(args, [1, 3]);
+            expect(sql).toBe('delete from myTable where id in (?,?)');
+            expect(args).toStrictEqual([1, 3]);
         });
 
         it('sqlDelete() #4', async () => {
             const { sql, args } = Utils.sqlDelete('myTable', { name: 'bruce' }, 5);
-            assert(sql == 'delete from myTable where name = ? limit 5');
-            assert.deepEqual(args, ['bruce']);
+            expect(sql).toBe('delete from myTable where name = ? limit 5');
+            expect(args).toStrictEqual(['bruce']);
         });
     });
 
-    describe('sqlIncrement() 方法', async () => {
+    describe('sqlIncrement() 方法', () => {
         it('sqlIncrement() #1', async () => {
             const { sql, args } = Utils.sqlIncrement('myTable', 'field1', 10, { id: 1 });
-            assert(sql == 'update myTable set field1 = field1 + ? where id = ?');
-            assert.deepEqual(args, [10, 1]);
+            expect(sql).toBe('update myTable set field1 = field1 + ? where id = ?');
+            expect(args).toStrictEqual([10, 1]);
+        });
+    });
+
+    describe('真实测试', () => {
+        it('test #1', async () => {
+            const helper = MysqlHelper.getInstance({
+                name: 'default',
+                host: '',
+                port: 3306,
+                user: '',
+                password: '',
+                charset: 'utf8mb4',
+                database: '',
+            });
+            const res = await helper.selectOne({ table: 'user_table', fields: ['userId', 'userName'], where: { userId: 10000 } });
+            expect(res).toBeDefined();
         });
     });
 });

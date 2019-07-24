@@ -29,6 +29,14 @@ async function main() {
         console.log(err.stack);
     }
 }
+
+// 同时也支持以对象为参数的方式
+// 在可选参数很多的时候，这样做很方便
+const values = await helper.selectOne({
+    table: tableName,
+    fields,
+    where,
+});
 ```
 ### 查询多条数据
 ```typescript
