@@ -79,7 +79,7 @@ interface IIncrementOptions {
     id?: string;
 }
 
-export type TWhere = { [key: string]: string | number | { [key: string]: any } };
+export type TWhere = { [key: string]: string | number | boolean | { [key: string]: any } };
 
 export class MysqlHelper extends EventEmitter {
     private static instance: MysqlHelper;

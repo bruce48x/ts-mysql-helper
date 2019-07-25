@@ -115,7 +115,7 @@ export class Utils {
         return { sql, args: condArgs };
     }
 
-    private static whereString(key: string, val: string | number, cond: any[], args: any[]) {
+    private static whereString(key: string, val: string | number | boolean, cond: any[], args: any[]) {
         cond.push(`${key} = ?`);
         args.push(val);
     }
