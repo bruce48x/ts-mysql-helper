@@ -110,7 +110,8 @@ export class MysqlHelper extends EventEmitter {
         this.logger = this.config[0].logger;
         this.poolCluster = mysql.createPoolCluster();
         for (const cnf of this.config) {
-            this.poolCluster.add(cnf.name, cnf);
+            const poolId = cnf.name || 'default';
+            this.poolCluster.add(poolId, cnf);
         }
     }
 
@@ -138,11 +139,10 @@ export class MysqlHelper extends EventEmitter {
                     });
                 });
             };
-            if (id) {
-                this.poolCluster.getConnection(id, callback);
-            } else {
-                this.poolCluster.getConnection(callback);
+            if (!id) {
+                id = 'default';
             }
+            this.poolCluster.getConnection(id, callback);
         });
     };
 
@@ -155,7 +155,8 @@ export class MysqlHelper extends EventEmitter {
         }
         if (mysqlConfig instanceof Array) {
             for (const cnf of mysqlConfig) {
-                this.poolCluster.add(cnf.name, cnf);
+                const poolId = cnf.name || 'default';
+                this.poolCluster.add(poolId, cnf);
             }
             this.config = [...this.config, ...mysqlConfig];
             if (!this.logger) {
@@ -163,7 +164,8 @@ export class MysqlHelper extends EventEmitter {
                 this.logger = mysqlConfig[0].logger;
             }
         } else {
-            this.poolCluster.add(mysqlConfig.name, mysqlConfig);
+            const poolId = mysqlConfig.name || 'default';
+            this.poolCluster.add(poolId, mysqlConfig);
             this.config.push(mysqlConfig);
             if (!this.logger) {
                 this.logging = mysqlConfig.logging;
