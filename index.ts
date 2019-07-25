@@ -6,8 +6,8 @@ import { Utils } from './utils';
 
 export interface ITsMysqlHelperConfig extends mysql.PoolConfig {
     name: string;
-    logging: boolean;
-    logger: any;
+    logging?: boolean;
+    logger?: any;
 }
 
 interface IQueryResult {
@@ -94,14 +94,13 @@ export class MysqlHelper extends EventEmitter {
         return this.instance;
     };
 
-    private config: ITsMysqlHelperConfig | ITsMysqlHelperConfig[];
+    private config: ITsMysqlHelperConfig[];
     private poolCluster: mysql.PoolCluster;
     private logging: boolean;
     private logger: any;
 
     private constructor(mysqlConfig?: ITsMysqlHelperConfig | ITsMysqlHelperConfig[]) {
         super();
-        this.config = mysqlConfig;
         if (mysqlConfig instanceof Array) {
             this.config = mysqlConfig;
         } else {
@@ -113,7 +112,7 @@ export class MysqlHelper extends EventEmitter {
         for (const cnf of this.config) {
             this.poolCluster.add(cnf.name, cnf);
         }
-    };
+    }
 
     private _query(sql: string, args: any, id?: string): Promise<IQueryResult> {
         if (this.logging) {
@@ -146,6 +145,32 @@ export class MysqlHelper extends EventEmitter {
             }
         });
     };
+
+    addPool(mysqlConfig?: ITsMysqlHelperConfig | ITsMysqlHelperConfig[]) {
+        if (!this.config) {
+            this.config = [];
+        }
+        if (!this.poolCluster) {
+            this.poolCluster = mysql.createPoolCluster();
+        }
+        if (mysqlConfig instanceof Array) {
+            for (const cnf of mysqlConfig) {
+                this.poolCluster.add(cnf.name, cnf);
+            }
+            this.config = [...this.config, ...mysqlConfig];
+            if (!this.logger) {
+                this.logging = mysqlConfig[0].logging;
+                this.logger = mysqlConfig[0].logger;
+            }
+        } else {
+            this.poolCluster.add(mysqlConfig.name, mysqlConfig);
+            this.config.push(mysqlConfig);
+            if (!this.logger) {
+                this.logging = mysqlConfig.logging;
+                this.logger = mysqlConfig.logger;
+            }
+        }
+    }
 
     /**
      * 除非有目前未提供的功能，否则不要使用这个函数

@@ -1,6 +1,6 @@
 {
     "name": "ts-mysql-helper",
-    "version": "1.1.2",
+    "version": "1.2.0",
     "description": "mysql helper",
     "main": "./dist/index.js",
     "keywords": [

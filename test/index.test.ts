@@ -175,5 +175,20 @@ describe('测试 Utils，将各种参数转成 sql 语句', () => {
             const res = await helper.selectOne({ table: 'user_table', fields: ['userId', 'userName'], where: { userId: 10000 } });
             expect(res).toBeDefined();
         });
+
+        it('test #2', async () => {
+            const helper = MysqlHelper.getInstance();
+            helper.addPool({
+                name: 'default2',
+                host: '',
+                port: 3306,
+                user: '',
+                password: '',
+                charset: 'utf8mb4',
+                database: '',
+            });
+            const res = await helper.selectOne({ table: 'user_table', fields: ['userId', 'userName'], where: { userId: 10000 }, id: 'default2' });
+            expect(res).toBeDefined();
+        })
     });
 });
