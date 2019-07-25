@@ -115,7 +115,7 @@ export class MysqlHelper extends EventEmitter {
     }
 
     private _query(sql: string, args: any, id?: string): Promise<IQueryResult> {
-        if (this.logging) {
+        if (this.logging && this.logger) {
             this.logger.log(sql, args);
         }
         return new Promise((resolve, reject) => {
@@ -170,6 +170,10 @@ export class MysqlHelper extends EventEmitter {
                 this.logger = mysqlConfig.logger;
             }
         }
+    }
+
+    isPoolExists(name: string) {
+        return !!this.poolCluster.of(name);
     }
 
     /**
