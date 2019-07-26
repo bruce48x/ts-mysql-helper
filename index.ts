@@ -96,6 +96,7 @@ export class MysqlHelper extends EventEmitter {
 
     private config: ITsMysqlHelperConfig[];
     private poolCluster: mysql.PoolCluster;
+    private poolArr: string[];
     private logging: boolean;
     private logger: any;
 
@@ -109,9 +110,13 @@ export class MysqlHelper extends EventEmitter {
         this.logging = this.config[0].logging;
         this.logger = this.config[0].logger;
         this.poolCluster = mysql.createPoolCluster();
+        this.poolArr = [];
         for (const cnf of this.config) {
             const poolId = cnf.name || 'default';
             this.poolCluster.add(poolId, cnf);
+            if (!this.poolArr.includes(poolId)) {
+                this.poolArr.push(poolId);
+            }
         }
     }
 
@@ -150,13 +155,13 @@ export class MysqlHelper extends EventEmitter {
         if (!this.config) {
             this.config = [];
         }
-        if (!this.poolCluster) {
-            this.poolCluster = mysql.createPoolCluster();
-        }
         if (mysqlConfig instanceof Array) {
             for (const cnf of mysqlConfig) {
                 const poolId = cnf.name || 'default';
                 this.poolCluster.add(poolId, cnf);
+                if (!this.poolArr.includes(poolId)) {
+                    this.poolArr.push(poolId);
+                }
             }
             this.config = [...this.config, ...mysqlConfig];
             if (!this.logger) {
@@ -166,6 +171,9 @@ export class MysqlHelper extends EventEmitter {
         } else {
             const poolId = mysqlConfig.name || 'default';
             this.poolCluster.add(poolId, mysqlConfig);
+            if (!this.poolArr.includes(poolId)) {
+                this.poolArr.push(poolId);
+            }
             this.config.push(mysqlConfig);
             if (!this.logger) {
                 this.logging = mysqlConfig.logging;
@@ -175,7 +183,7 @@ export class MysqlHelper extends EventEmitter {
     }
 
     isPoolExists(name: string) {
-        return !!this.poolCluster.of(name);
+        return this.poolArr.includes(name);
     }
 
     /**

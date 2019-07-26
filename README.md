@@ -4,7 +4,7 @@ mysql 帮助类，需要 Node.js 8.0 以上版本
 ## Usage
 ### 初始化
 ```typescript
-import { MysqlHelper } from 'ts-mysql-helper'
+import { MysqlHelper } from 'ts-mysql-helper';
 const mysqlConfig = {
     host: 'localhost',
     port: 3306,
@@ -14,7 +14,36 @@ const mysqlConfig = {
     charset: 'utf8mb4'
 };
 const helper = MysqlHelper.getInstance(mysqlConfig);
+
+// 也可以再后期增加新的连接
+helper.addPool(mysqlConfig1);
+helper.addPool(mysqlConfig2);
 ```
+
+### 多库连接
+```typescript
+import { MysqlHelper } from 'ts-mysql-helper';
+const helper = MysqlHelper.getInstance();
+helper.addPool({
+    name: 'db1',
+    ...
+});
+helper.addPool({
+    name: 'db2',
+    ...
+});
+helper.addPool({
+    name: 'db2',
+    ...
+});
+
+// 查询时
+const result = await helper.selectOne({
+    table: 'my_table',
+    id: 'db1',  // 指定用哪个库
+});
+```
+
 ### 查询一条数据
 ```typescript
 const tableName = 'my_table';
