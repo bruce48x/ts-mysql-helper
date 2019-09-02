@@ -26,6 +26,7 @@ interface IInsertOptions {
     values: any;
     id?: string;
     onDuplicate?: boolean;
+    updateKeys?: string[];
 }
 
 interface IBatchInsertOptions {
@@ -211,7 +212,7 @@ export class MysqlHelper extends EventEmitter {
     async insertInto(table: string, values: any, id?: string): Promise<number>;
     async insertInto(table: string | IInsertOptions, values?: any, id?: string) {
         if (typeof table == 'object') {
-            const { sql, args } = Utils.sqlInsert(table.table, table.onDuplicate, table.values);
+            const { sql, args } = Utils.sqlInsert(table.table, table.onDuplicate, table.updateKeys, table.values);
             let { results } = await this._query(sql, args, table.id);
             return results.insertId;
         } else {

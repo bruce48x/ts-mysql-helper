@@ -7,14 +7,14 @@ export interface IWhereResult {
 }
 
 export class Utils {
-    static sqlInsert(table: string, onDuplicate?: boolean, values?: any) {
+    static sqlInsert(table: string, onDuplicate?: boolean, updateKeys?: string[], values?: any) {
         let sql = `insert into ${table} set`;
         let args;
         if (onDuplicate) {
             args = [];
             sql += ' ? on duplicate key update ';
             args.push(values);
-            for (const field in values) {
+            for (const field of updateKeys) {
                 sql += `${field} = ?,`;
                 args.push(values[field]);
             }

@@ -71,7 +71,7 @@ describe('测试 Utils，将各种参数转成 sql 语句', () => {
         });
 
         it('sqlInsert() #2 onDuplicate', () => {
-            const { sql, args } = Utils.sqlInsert('myTable', true, { b: 2 });
+            const { sql, args } = Utils.sqlInsert('myTable', true, ['b'], { a: 1, b: 2 });
             expect(sql).toBe('insert into myTable set ? on duplicate key update b = ?');
         });
     });
@@ -192,7 +192,13 @@ describe('测试 Utils，将各种参数转成 sql 语句', () => {
             //     charset: 'utf8mb4',
             //     database: '',
             // });
-            // const res = await helper.insertInto({ table: 'user_name_table', values: { userId: 10000, userName: 'fromUnitTest' }, onDuplicate: true, id: 'default2' });
+            // const res = await helper.insertInto({
+            //     table: 'user_name_table',
+            //     values: { userId: 10000, userName: 'fromUnitTest' },
+            //     id: 'default2',
+            //     onDuplicate: true,
+            //     updateKeys: ['userName'],
+            // });
             // expect(res).toBeDefined();
         })
     });
