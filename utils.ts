@@ -7,8 +7,23 @@ export interface IWhereResult {
 }
 
 export class Utils {
-    static sqlInsert(table: string) {
-        return `insert into ${table} set ?`;
+    static sqlInsert(table: string, onDuplicate?: boolean, values?: any) {
+        let sql = `insert into ${table} set`;
+        let args;
+        if (onDuplicate) {
+            args = [];
+            sql += ' ? on duplicate key update ';
+            args.push(values);
+            for (const field in values) {
+                sql += `${field} = ?,`;
+                args.push(values[field]);
+            }
+            sql = sql.slice(0, -1);
+        } else {
+            sql += ' ?';
+            args = values;
+        }
+        return { sql, args };
     }
 
     static sqlBatchInsert(table: string, fieldsArr: any[]) {

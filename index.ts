@@ -25,6 +25,7 @@ interface IInsertOptions {
     table: string;
     values: any;
     id?: string;
+    onDuplicate?: boolean;
 }
 
 interface IBatchInsertOptions {
@@ -210,15 +211,15 @@ export class MysqlHelper extends EventEmitter {
     async insertInto(table: string, values: any, id?: string): Promise<number>;
     async insertInto(table: string | IInsertOptions, values?: any, id?: string) {
         if (typeof table == 'object') {
-            const sql = Utils.sqlInsert(table.table);
-            let { results } = await this._query(sql, table.values, table.id);
+            const { sql, args } = Utils.sqlInsert(table.table, table.onDuplicate, table.values);
+            let { results } = await this._query(sql, args, table.id);
             return results.insertId;
         } else {
-            const sql = Utils.sqlInsert(table);
+            const { sql } = Utils.sqlInsert(table);
             let { results } = await this._query(sql, values, id);
             return results.insertId;
         }
-    };
+    }
 
     /**
      * 批量插入
