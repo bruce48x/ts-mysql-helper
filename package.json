@@ -14,7 +14,7 @@
         "@types/mysql": "^2.15.6",
         "intelli-espower-loader": "^1.0.1",
         "lodash": "^4.17.11",
-        "mysql": "^2.17.1"
+        "mysql2": "^2.3.3"
     },
     "devDependencies": {
         "@types/chai": "^4.1.7",
